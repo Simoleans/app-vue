@@ -67,13 +67,14 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
     }
   },
   methods: {
     logIn: function() {
       firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
         (user) => {
+         
           console.log(user);
           this.$router.replace('home')
         },
@@ -88,7 +89,14 @@ export default {
         var token = result.credential.accessToken;
         // The signed-in user info.
         var user = result.user;
+         console.log(user.email);
+        // this.$router.push('about')
+        //this.$route.replace('/about')
+
+
         // ...
+        }).then(() => {
+          this.$router.push('/about')
         }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;

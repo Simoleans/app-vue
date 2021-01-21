@@ -1,5 +1,5 @@
 <template>
   <div class="about">
-    <h1>Sobre mi!</h1>
+    <h1>Estas logueado!</h1>
   </div>
 </template>

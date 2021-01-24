@@ -1,5 +1,7 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import NotFound from '../components/NotFound.vue'
+import Dashboard from '../views/Dashboard.vue'
 import firebase from "firebase/app";
 import 'firebase/app';
 import 'firebase/auth';
@@ -7,7 +9,7 @@ import 'firebase/auth';
 const routes = [
   {
     path: "/:catchAll(.*)",
-    redirect: "/",
+    component: NotFound,
     meta: {
       requiresAuth: false
     },
@@ -18,6 +20,14 @@ const routes = [
     component: Home,
     meta: {
       requiresAuth: false
+    },
+  },
+  {
+    path: '/dasboard',
+    name: 'Dasboard',
+    component: Dashboard,
+    meta: {
+      requiresAuth: true
     },
   },
   {
@@ -32,8 +42,7 @@ const routes = [
 
 
 const router = createRouter({
-  mode: 'history',
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 

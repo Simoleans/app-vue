@@ -96,7 +96,7 @@ export default {
 
         // ...
         }).then(() => {
-          this.$router.push('/about')
+          this.$router.push('/dasboard')
         }).catch(function(error) {
         // Handle Errors here.
         var errorCode = error.code;

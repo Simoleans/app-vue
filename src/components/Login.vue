@@ -1,8 +1,8 @@
 <template>
-    <div class="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
+   <!--  <div class="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
       <div class="flex flex-col overflow-hidden bg-white rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md">
         <div class="p-5 bg-white md:flex-1">
-          <h3 class="my-4 text-2xl font-semibold text-gray-700">Inicio de sesión</h3>
+          <h3 class="my-4 text-2xl font-semibold text-gray-700">Registrarse</h3>
           <form action="#" class="flex flex-col space-y-5" @submit.prevent="logIn">
             <div class="flex flex-col space-y-1">
               <label for="email" class="text-sm font-semibold text-gray-500">Email</label>
@@ -23,12 +23,12 @@
                 class="px-4 py-2 transition duration-300 border border-gray-300  focus:border-transparent focus:outline-none focus:ring-4 focus:ring-blue-100"
               />
             </div>
-            <div>
+            <div class="flex gap-4">
               <button
                 type="submit"
                 class="w-full px-4 py-2 text-lg font-semibold text-white transition-colors duration-300 bg-blue-500 rounded-md shadow hover:bg-blue-600 focus:outline-none focus:ring-blue-200 focus:ring-4"
               >
-                Entrar
+                Registrarse
               </button>
             </div>
             <div class="flex flex-col space-y-5">
@@ -38,22 +38,39 @@
                 <span class="h-px bg-gray-400 w-14"></span>
               </span>
               <div class="flex flex-col space-y-4">
-                <a
-                  v-on:click="loginGmail"
-                  href="#"
-                  class="flex items-center bg-red-500 justify-center px-4 py-2 space-x-2 transition-colors duration-300 border  rounded-md group hover:bg-red-800 focus:outline-none"
-                >
-                  <span>
-                    <svg class="w-5 h-5 text-white fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                    </svg>
-                  </span>
-                  <span class="text-sm font-medium text-white" >Gmail</span>
-                </a>
+                <router-link  to="/" class="text-blue-500 font-bold">Ya estoy registrado</router-link >
               </div>
             </div>
           </form>
+        </div>
+      </div>
+    </div> -->
+
+
+
+    <!------ nuevo -->
+    <div class="flex items-center min-h-screen p-4 bg-gray-100 lg:justify-center">
+      <div class="flex overflow-hidden bg-white container justify-center rounded-md shadow-lg max md:flex-row md:flex-1 lg:max-w-screen-md">
+        <div class="hidden sm:block p-5 flex-1 bg-blue-400">
+          <div class="flex-col gap-4">
+            <p class="text-2xl font-bold mb-8">Aplicación VueJS 3.</p>
+            <p class="text-base">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia adipisci, quidem qui harum quam repellat autem sapiente consequatur laboriosam eveniet assumenda non aliquid molestiae veniam quasi ratione velit dolores at!
+            </p>
+          </div>
+        </div>
+        <div class="p-5 bg-white flex-1">
+          <p class="text-2xl font-bold mb-8">Entrar</p>
+          <button @click="loginGmail" class="inline-flex w-full px-4 py-3 font-semibold text-blue-700 border border-gray-300 rounded-lg bg-blue-1300 hover:bg-blue-700 hover:text-white focus:bg-gray-100">
+            <div class="flex items-center justify-center">
+              <div class="border-r">
+                <img src="https://s2.googleusercontent.com/s2/favicons?domain=google.co&sz=32" class="w-6 h-6 inline-block mr-4" alt="Google Login"/>
+              </div>
+              <div class="ml-16">
+                Login con google
+              </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -63,7 +80,7 @@
 import {firebase,provider} from '@/components/firebaseInit'
 
 export default {
-  name: 'Login',
+  name: 'SignIn',
   data() {
     return {
       email: '',

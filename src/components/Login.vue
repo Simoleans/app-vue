@@ -64,13 +64,14 @@
           <button @click="loginGmail" class="inline-flex w-full px-4 py-3 font-semibold text-blue-700 border border-gray-300 rounded-lg bg-blue-1300 hover:bg-blue-700 hover:text-white focus:bg-gray-100">
             <div class="flex items-center justify-center">
               <div class="border-r">
-                <img src="https://s2.googleusercontent.com/s2/favicons?domain=google.co&sz=32" class="w-6 h-6 inline-block mr-4" alt="Google Login"/>
+                <img src="https://s2.googleusercontent.com/s2/favicons?domain=google.co&sz=32" class="w-6 h-6 inline-block mr-4" alt="Google"/>
               </div>
               <div class="ml-16">
                 Login con google
               </div>
             </div>
           </button>
+          <small class="text-red-600" v-show="test">{{ errorMessage }}</small>
         </div>
       </div>
     </div>
@@ -78,52 +79,32 @@
 
 <script>
 import {firebase,provider} from '@/components/firebaseInit'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 
 export default {
-  name: 'SignIn',
-  data() {
-    return {
-      email: '',
-      password: '',
-    }
-  },
-  methods: {
-    logIn: function() {
-      firebase.auth().signInWithEmailAndPassword(this.email, this.password).then(
-        (user) => {
-         
-          console.log(user);
-          this.$router.replace('home')
-        },
-        (err) => {
-          alert('Oops. ' + err.message)
-        }
-      );
-    },
-    loginGmail : function () {
-       firebase.auth().signInWithPopup(provider).then(function(result) {
-        // This gives you a Google Access Token. You can use it to access the Google API.
+  setup()  {
+    let test = ref(false);
+    const errorMessage = ref()
+    const router = useRouter()
+
+    const loginGmail = () =>{
+      firebase.auth().signInWithPopup(provider).then(function(result) {
         var token = result.credential.accessToken;
-        // The signed-in user info.
         var user = result.user;
-         console.log(user.email);
-        // this.$router.push('about')
-        //this.$route.replace('/about')
+      }).then(() => {
+        router.push('/dasboard')
+      }).catch(function(error) {
+        test.value = true;
+        errorMessage.value = error.message;
+      });
+    }
 
-
-        // ...
-        }).then(() => {
-          this.$router.push('/dasboard')
-        }).catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-        });
+    return {
+      errorMessage,
+      test,
+      loginGmail
     }
   }
 }

@@ -1,15 +1,37 @@
 <template>
- 	<NavBar/>
+ 	  <NavBar/>
+     <Container />
 </template>
 
 <script>
 // @ is an alias to /src
 import NavBar from '@/components/Dashboard/NavBar.vue'
+import Container from '@/components/Dashboard/Container.vue'
+import { firebase } from '@/components/firebaseInit'
+import { provide,ref } from 'vue'
 
 export default {
-  name: 'Dashboard',
   components: {
     NavBar,
+    Container
+  },
+  setup() {
+    let user = null;
+    const infoUser = ref({});
+
+    provide("infoUser",infoUser);
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        infoUser.value = user;
+      } else {
+        let user = null;
+      }
+    });
+
+    return {
+      user
+    }
   }
 }
 </script>

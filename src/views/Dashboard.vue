@@ -1,6 +1,6 @@
 <template>
- 	  <NavBar/>
-     <Container />
+ 	<NavBar />
+  <Container />
 </template>
 
 <script>
@@ -16,22 +16,17 @@ export default {
     Container
   },
   setup() {
-    let user = null;
-    const infoUser = ref({});
+//     let user = null;
+//     const infoUser = ref({});
 
-    provide("infoUser",infoUser);
+    
 
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        infoUser.value = user;
-      } else {
-        let user = null;
-      }
-    });
-
-    return {
-      user
-    }
+    
+// provide("infoUser",infoUser);
+//     return {
+//       user,
+//       infoUser
+//     }
   }
 }
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div class="home">
-    <!-- <Button/> -->
     <Login />
   </div>
 </template>

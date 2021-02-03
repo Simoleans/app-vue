@@ -1,8 +1,9 @@
 export default {
-    apiKey: "AIzaSyBLOmt2Qdz46QgV0ebtvPvZ6WFvSdB6CRk",
-    authDomain: "vue-app-pago.firebaseapp.com",
-    projectId: "vue-app-pago",
-    storageBucket: "vue-app-pago.appspot.com",
-    messagingSenderId: "794606066324",
-    appId: "1:794606066324:web:e9afccc5e10c951ca57281"
+  apiKey: "AIzaSyAjo0nnIsEXG-DFjSeE-YqxizDkdz5sOAQ",
+  authDomain: "vue-app-pago-movil.firebaseapp.com",
+  projectId: "vue-app-pago-movil",
+  storageBucket: "vue-app-pago-movil.appspot.com",
+  messagingSenderId: "645007268828",
+  appId: "1:645007268828:web:159b515a4e840b14b60d19",
+  measurementId: "G-XS4N7B4TTV"
   };

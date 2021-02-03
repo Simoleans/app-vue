@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import NotFound from '../components/NotFound.vue'
+import Calculate from '../views/Calculate.vue'
+import Pagos from '../views/Pagos.vue'
 import Dashboard from '../views/Dashboard.vue'
 import firebase from "firebase/app";
 import 'firebase/app';
@@ -23,11 +25,21 @@ const routes = [
     },
   },
   {
-    path: '/dasboard',
-    name: 'Dasboard',
+    path: '/dashboard',
+    name: 'Dashboard',
     component: Dashboard,
+    children : [{
+      path : 'calculate',
+      name : 'calculate',
+      component : Calculate
+    },
+    {
+      path : 'pagos',
+      name : 'pagos',
+      component : Pagos
+    }],
     meta: {
-      requiresAuth: true
+      requiresAuth: false
     },
   },
   {

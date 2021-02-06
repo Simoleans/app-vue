@@ -9,17 +9,17 @@
                     </svg>
                 </div>
                 <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Monto (Hoy)</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
+                    <div class="text-sm text-gray-500 dark:text-white">Total Monto</div>
+                    <div class="font-bold text-lg dark:text-white">{{ suma.today.monto }} BsS</div>
                 </div>
-                <div class="flex flex-col flex-grow ml-4 items-center pt-2">
+                <!-- <div class="flex flex-col flex-grow ml-4 items-center pt-2">
                     <div class="text-sm text-gray-500 dark:text-white">Total Monto (Mes)</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday().monto }} BsS</div>
+                    <div class="font-bold text-lg dark:text-white">{{ sumToday.monto }} BsS</div>
                 </div>
                 <div class="flex flex-col flex-grow ml-4 items-center pt-2">
                     <div class="text-sm text-gray-500 dark:text-white">Total Monto Todo</div>
                     <div class="font-bold text-lg dark:text-white">{{ sumToday.monto }} BsS</div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="col-span-2 md:col-span-1  hover:shadow-lg">
@@ -30,21 +30,26 @@
                     </svg>
                 </div>
                 <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Comisiones (Hoy)</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
+                    <div class="text-sm text-gray-500 dark:text-white">Total Comisiones</div>
+                    <div class="font-bold text-lg dark:text-white">{{ suma.today.comision }} BsS</div>
                 </div>
-                <div class="flex flex-col flex-grow ml-4 items-center pt-2">
+                <!-- <div class="flex flex-col flex-grow ml-4 items-center pt-2">
                     <div class="text-sm text-gray-500 dark:text-white">Total Comisiones (Mes)</div>
                     <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
                 </div>
                 <div class="flex flex-col flex-grow ml-4 items-center pt-2">
                     <div class="text-sm text-gray-500 dark:text-white">Total Comisiones Todo</div>
                     <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
-    <ul id="example-1">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 px-12">
+        <button v-on:click="diaQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded" :class="activeQuery.dia ? 'bg-gray-300' : 'bg-gray-100'">Día</button>
+        <button v-on:click="mesQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded" :class="activeQuery.mes ? 'bg-gray-300' : 'bg-gray-100'">Mes</button>
+        <button v-on:click="allQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded md:col-span-1 lg:col-span-1 col-span-2" :class="activeQuery.all ? 'bg-gray-300' : 'bg-gray-100'">Siempre</button>
+    </div>
+    <ul id="example-1" class="mt-6">
         <h2 v-show="loading"> Cargando...</h2>
         <ul id="example-2">
             <li v-for="p in pagos" :key="p.id">
@@ -55,7 +60,7 @@
 </template>
 <script>
 import { db } from '@/components/firebaseInit'
-import { ref,reactive,computed,watch } from 'vue'
+import { ref,reactive,watch } from 'vue'
 import moment from 'moment';
 import { queryToday } from "@/composables/query";
 // import { testing,pagos as p } from "@/composables/test";
@@ -63,11 +68,22 @@ import { queryToday } from "@/composables/query";
 
 export default {
     setup(){
-        let pagos = ref([])
+        let pagos = ref([]);
+        let suma = reactive({
+            today : {
+                comision : 0,
+                monto : 0
+            }
+        });
         let loading = ref(true);
 
+        let activeQuery = reactive({
+            dia : true,
+            mes : false,
+            all : false
+        })
 
-        db.collection("pagos")
+        db.collection("pagos").where('created_at','==',moment().format('YYYY-MM-DD'))
         .get()
         .then(function(querySnapshot) {
             let docs = []
@@ -79,42 +95,111 @@ export default {
             });
             pagos.value = [...docs];
             loading.value = false;
-            // let sumaComision = pagos.value.reduce((a, {comision}) => parseFloat(a) + parseFloat(comision), 0);
-            // console.log('datos sum',sumaComision)
-            sumToday(pagos);
-            console.log('datos fetch',pagos)
             
-            console.log('sum',sumToday(pagos))
         })
         .catch(function(error) {
             console.log("Error getting documents: ", error);
         });
+        
+        let watchSum = watch(pagos,(v) => {
+            sumToday(v)
+        });
 
+        watch(activeQuery,(v) =>{
+            loading.value = true;
+            pagos.value = [];
+        });
+
+        const sumToday = (d) => {
+            
+            let sumaComision = d.reduce((a, {comision}) => parseFloat(a) + parseFloat(comision), 0);
+            let sumaMonto = d.reduce((a, {monto}) => parseFloat(a) + parseFloat(monto), 0);
+
+            suma.today.comision = sumaComision.toFixed(2);
+            suma.today.monto = sumaMonto.toFixed(2);
         
-       
-        console.log('datos fuera ',pagos)
-        console.log('datos fuera todo',pagos)
-        
-       
-            const sumToday = (d) => {
+        } 
+
+
+            const mesQuery = () => {
+                activeQuery.dia = false;
+                activeQuery.all = false;
+                activeQuery.mes = true;
+                db.collection("pagos").orderBy('created_at').startAt(moment().startOf('month').format('YYYY-MM-DD')).endAt(moment().endOf('month').format('YYYY-MM-DD'))
+                .get()
+                .then(function(querySnapshot) {
+                    let docs = []
+                    querySnapshot.forEach(function(doc) {
+                        docs.push({
+                            ...doc.data(),
+                            id : doc.id
+                        })
+                    });
+                    pagos.value = [...docs];
+                    loading.value = false;
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
+                });
+            }
+
+            const diaQuery = () => {
+                activeQuery.dia = true;
+                activeQuery.all = false;
+                activeQuery.mes = false;
+                db.collection("pagos").where('created_at','==',moment().format('YYYY-MM-DD'))
+                .get()
+                .then(function(querySnapshot) {
+                    let docs = []
+                    querySnapshot.forEach(function(doc) {
+                        docs.push({
+                            ...doc.data(),
+                            id : doc.id
+                        })
+                    });
+                    pagos.value = [...docs];
+                    loading.value = false;
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
+                });
                 
-                // console.log('sumToday',d)
-                let sumaComision = d.value.reduce((a, {comision}) => parseFloat(a) + parseFloat(comision), 0);
-                let sumaMonto = d.value.reduce((a, {monto}) => parseFloat(a) + parseFloat(monto), 0);
+                let watchSum = watch(pagos,(v) => {
+                    sumToday(v)
+                });
+
+            }
+
+            const allQuery = () => {
+                activeQuery.dia = false;
+                activeQuery.all = true;
+                activeQuery.mes = false;
+                db.collection("pagos").orderBy('created_at').startAt(moment().startOf('year').format('YYYY-MM-DD')).endAt(moment().endOf('year').format('YYYY-MM-DD'))
+                .get()
+                .then(function(querySnapshot) {
+                    let docs = []
+                    querySnapshot.forEach(function(doc) {
+                        docs.push({
+                            ...doc.data(),
+                            id : doc.id
+                        })
+                    });
+                    pagos.value = [...docs];
+                    loading.value = false;
+                })
+                .catch(function(error) {
+                    console.log("Error getting documents: ", error);
+                });
+            }
             
-                let object = {
-                    comision : sumaComision,
-                    monto : sumaMonto
-                }
-            
-                return object;
-             } 
-            // // 
-            //  console.log('function',sumToday(pagos))
             return {
                 pagos,
-                sumToday,
-                loading
+                suma,
+                loading,
+                activeQuery,
+                mesQuery,
+                diaQuery,
+                allQuery
             }
     }
 }

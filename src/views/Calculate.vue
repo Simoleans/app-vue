@@ -93,7 +93,7 @@ export default {
             await db.collection("pagos").add({
                 ...values,
                 user : data.uid,
-                created_at :moment().format('YYYY-MM-DD')
+                created_at : moment().format('YYYY-MM-DD')
             })
             .then(function(docRef) {
                 alert(true,'Se ha guardado correctamente');

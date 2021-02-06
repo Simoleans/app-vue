@@ -45,12 +45,14 @@
         </div>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 px-12">
-        <button v-on:click="diaQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded" :class="activeQuery.dia ? 'bg-gray-300' : 'bg-gray-100'">Día</button>
-        <button v-on:click="mesQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded" :class="activeQuery.mes ? 'bg-gray-300' : 'bg-gray-100'">Mes</button>
-        <button v-on:click="allQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded md:col-span-1 lg:col-span-1 col-span-2" :class="activeQuery.all ? 'bg-gray-300' : 'bg-gray-100'">Siempre</button>
+        <button v-on:click="diaQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded shadow-sm" :class="activeQuery.dia ? 'bg-gray-300' : 'bg-gray-100'">Día</button>
+        <button v-on:click="mesQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded shadow-sm" :class="activeQuery.mes ? 'bg-gray-300' : 'bg-gray-100'">Mes</button>
+        <button v-on:click="allQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded shadow-sm md:col-span-1 lg:col-span-1 col-span-2" :class="activeQuery.all ? 'bg-gray-300' : 'bg-gray-100'">Siempre</button>
     </div>
     <ul id="example-1" class="mt-6">
         <h2 v-show="loading"> Cargando...</h2>
+        <h2 v-show="emptyData"> No tiene registros, pulse <router-link  :to="{ name: 'calculate', params: { }}" class="text-blue-300  hover:text-blue-400 font-bold">Aquí</router-link>
+    para hacer un registro.</h2>
         <ul id="example-2">
             <li v-for="p in pagos" :key="p.id">
                 {{ p.comision }} - {{ p.monto }} / {{ p.created_at }}
@@ -59,148 +61,21 @@
     </ul>
 </template>
 <script>
-import { db } from '@/components/firebaseInit'
-import { ref,reactive,watch } from 'vue'
-import moment from 'moment';
-import { queryToday } from "@/composables/query";
-// import { testing,pagos as p } from "@/composables/test";
-
+import { pagos,suma,loading,activeQuery,mesQuery,diaQuery,allQuery,queryDay,emptyData } from "@/composables/query";
 
 export default {
     setup(){
-        let pagos = ref([]);
-        let suma = reactive({
-            today : {
-                comision : 0,
-                monto : 0
-            }
-        });
-        let loading = ref(true);
-
-        let activeQuery = reactive({
-            dia : true,
-            mes : false,
-            all : false
-        })
-
-        db.collection("pagos").where('created_at','==',moment().format('YYYY-MM-DD'))
-        .get()
-        .then(function(querySnapshot) {
-            let docs = []
-            querySnapshot.forEach(function(doc) {
-                docs.push({
-                    ...doc.data(),
-                    id : doc.id
-                })
-            });
-            pagos.value = [...docs];
-            loading.value = false;
-            
-        })
-        .catch(function(error) {
-            console.log("Error getting documents: ", error);
-        });
-        
-        let watchSum = watch(pagos,(v) => {
-            sumToday(v)
-        });
-
-        watch(activeQuery,(v) =>{
-            loading.value = true;
-            pagos.value = [];
-        });
-
-        const sumToday = (d) => {
-            
-            let sumaComision = d.reduce((a, {comision}) => parseFloat(a) + parseFloat(comision), 0);
-            let sumaMonto = d.reduce((a, {monto}) => parseFloat(a) + parseFloat(monto), 0);
-
-            suma.today.comision = sumaComision.toFixed(2);
-            suma.today.monto = sumaMonto.toFixed(2);
-        
-        } 
-
-
-            const mesQuery = () => {
-                activeQuery.dia = false;
-                activeQuery.all = false;
-                activeQuery.mes = true;
-                db.collection("pagos").orderBy('created_at').startAt(moment().startOf('month').format('YYYY-MM-DD')).endAt(moment().endOf('month').format('YYYY-MM-DD'))
-                .get()
-                .then(function(querySnapshot) {
-                    let docs = []
-                    querySnapshot.forEach(function(doc) {
-                        docs.push({
-                            ...doc.data(),
-                            id : doc.id
-                        })
-                    });
-                    pagos.value = [...docs];
-                    loading.value = false;
-                })
-                .catch(function(error) {
-                    console.log("Error getting documents: ", error);
-                });
-            }
-
-            const diaQuery = () => {
-                activeQuery.dia = true;
-                activeQuery.all = false;
-                activeQuery.mes = false;
-                db.collection("pagos").where('created_at','==',moment().format('YYYY-MM-DD'))
-                .get()
-                .then(function(querySnapshot) {
-                    let docs = []
-                    querySnapshot.forEach(function(doc) {
-                        docs.push({
-                            ...doc.data(),
-                            id : doc.id
-                        })
-                    });
-                    pagos.value = [...docs];
-                    loading.value = false;
-                })
-                .catch(function(error) {
-                    console.log("Error getting documents: ", error);
-                });
-                
-                let watchSum = watch(pagos,(v) => {
-                    sumToday(v)
-                });
-
-            }
-
-            const allQuery = () => {
-                activeQuery.dia = false;
-                activeQuery.all = true;
-                activeQuery.mes = false;
-                db.collection("pagos").orderBy('created_at').startAt(moment().startOf('year').format('YYYY-MM-DD')).endAt(moment().endOf('year').format('YYYY-MM-DD'))
-                .get()
-                .then(function(querySnapshot) {
-                    let docs = []
-                    querySnapshot.forEach(function(doc) {
-                        docs.push({
-                            ...doc.data(),
-                            id : doc.id
-                        })
-                    });
-                    pagos.value = [...docs];
-                    loading.value = false;
-                })
-                .catch(function(error) {
-                    console.log("Error getting documents: ", error);
-                });
-            }
-            
-            return {
-                pagos,
-                suma,
-                loading,
-                activeQuery,
-                mesQuery,
-                diaQuery,
-                allQuery
-            }
+        queryDay();
+        return {
+            pagos,
+            suma,
+            loading,
+            activeQuery,
+            mesQuery,
+            diaQuery,
+            allQuery,
+            emptyData
+        }
     }
 }
 </script>

@@ -12,14 +12,6 @@
                     <div class="text-sm text-gray-500 dark:text-white">Total Monto</div>
                     <div class="font-bold text-lg dark:text-white">{{ suma.today.monto }} BsS</div>
                 </div>
-                <!-- <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Monto (Mes)</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.monto }} BsS</div>
-                </div>
-                <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Monto Todo</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.monto }} BsS</div>
-                </div> -->
             </div>
         </div>
         <div class="col-span-2 md:col-span-1  hover:shadow-lg">
@@ -33,14 +25,6 @@
                     <div class="text-sm text-gray-500 dark:text-white">Total Comisiones</div>
                     <div class="font-bold text-lg dark:text-white">{{ suma.today.comision }} BsS</div>
                 </div>
-                <!-- <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Comisiones (Mes)</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
-                </div>
-                <div class="flex flex-col flex-grow ml-4 items-center pt-2">
-                    <div class="text-sm text-gray-500 dark:text-white">Total Comisiones Todo</div>
-                    <div class="font-bold text-lg dark:text-white">{{ sumToday.comision }} BsS</div>
-                </div> -->
             </div>
         </div>
     </div>
@@ -49,23 +33,66 @@
         <button v-on:click="mesQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded shadow-sm" :class="activeQuery.mes ? 'bg-gray-300' : 'bg-gray-100'">Mes</button>
         <button v-on:click="allQuery" class="text-blue-500 focus:outline-none font-bold px-12 py-2 rounded shadow-sm md:col-span-1 lg:col-span-1 col-span-2" :class="activeQuery.all ? 'bg-gray-300' : 'bg-gray-100'">Siempre</button>
     </div>
-    <ul id="example-1" class="mt-6">
+    <!-- <div class="grid grid-cols-1 px-12 mt-9">
+        <table class="text-left p-12">
+            <thead class="bg-black flex text-white w-full">
+                <tr class="flex w-full mb-4">
+                    <th class="p-4 w-1/4">One</th>
+                    <th class="p-4 w-1/4">Two</th>
+                    <th class="p-4 w-1/4">Three</th>
+                    <th class="p-4 w-1/4">Four</th>
+                </tr>
+            </thead>
+            <tbody class="bg-grey-light flex flex-col items-center justify-between overflow-y-scroll w-full" id="tbody-data" style="height: 50vh;">
+                <tr class="flex w-full mb-4">
+                    <td class="p-4 w-1/4">Dogs</td>
+                    <td class="p-4 w-1/4">Cats</td>
+                    <td class="p-4 w-1/4">Birds</td>
+                    <td class="p-4 w-1/4">Fish</td>
+                </tr>
+                <tr class="flex w-full mb-4">
+                    <td class="p-4 w-1/4">Dogs</td>
+                    <td class="p-4 w-1/4">Cats</td>
+                    <td class="p-4 w-1/4">Birds</td>
+                    <td class="p-4 w-1/4">Fish</td>
+                </tr>
+            </tbody>
+	    </table>
+    </div> -->
+    <div class="mt-6">
         <h2 v-show="loading"> Cargando...</h2>
         <h2 v-show="emptyData"> No tiene registros, pulse <router-link  :to="{ name: 'calculate', params: { }}" class="text-blue-300  hover:text-blue-400 font-bold">Aquí</router-link>
     para hacer un registro.</h2>
-        <ul id="example-2">
-            <li v-for="p in pagos" :key="p.id">
-                {{ p.comision }} - {{ p.monto }} / {{ p.created_at }}
-            </li>
-        </ul>
-    </ul>
+    </div>
+    <div class="grid grid-cols-4 gap-4 py-6 px-12" v-show="!emptyData">
+        <div class="rounded-lg shadow-sm mb-4" v-for="p in paginated" :key="p.id">
+            <div class="rounded-lg shadow-lg border-4 border-blue-500 border-opacity-25 hover:border-opacity-50 bg-gray-100 hover:shadow-xl relative overflow-hidden">
+                <div class="px-3 pt-8 pb-10 text-center relative z-10">
+                    <h4 class="text-xl uppercase text-gray-500 leading-tight">{{ p.monto }}</h4>
+                    <h3 class="text-lg text-red-700 font-semibold leading-tight my-3">-{{ p.comision }}</h3>
+                    <p class="text-xs text-green-500 leading-tight">{{ p.asunto }}</p>
+                    <!-- <p class="text-xs text-green-500 leading-tight">▲ 57.1%</p> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-end space-x-4 px-10 py-2" v-show="!emptyData && !loading">
+        <buttom class="p-4 cursor-pointer bg-blue-200 rounded shadow-md" @click="prev">Anterior</buttom>
+        <buttom class="p-4 cursor-pointer bg-blue-200 rounded shadow-md" @click="next">Siguiente</buttom>
+    </div>
+    
+    
+    
 </template>
 <script>
-import { pagos,suma,loading,activeQuery,mesQuery,diaQuery,allQuery,queryDay,emptyData } from "@/composables/query";
+import {onUnmounted, onMounted } from 'vue'
+
+import { pagos,suma,loading,activeQuery,mesQuery,diaQuery,allQuery,queryDay,emptyData,paginated,indexEnd,indexStart,next,prev} from "@/composables/query";
 
 export default {
     setup(){
         queryDay();
+
         return {
             pagos,
             suma,
@@ -74,7 +101,12 @@ export default {
             mesQuery,
             diaQuery,
             allQuery,
-            emptyData
+            emptyData,
+            paginated,
+            indexEnd,
+            indexStart,
+            next,
+            prev
         }
     }
 }

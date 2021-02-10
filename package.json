@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "npm run development",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build && npx tailwindcss build src/index.css -o public/css/main.css",
+    "build-tailwind:dev": "npx tailwindcss build src/index.css -o public/css/main.css",
+    "build-css:production": "cross-env NODE_ENV=production tailwindcss build src/index.css -o public/css/main.css"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.15.1",
@@ -25,6 +27,7 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "autoprefixer": "^9.8.6",
+    "cross-env": "^7.0.3",
     "postcss": "^7.0.35",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.2"
   },

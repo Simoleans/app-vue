@@ -56,8 +56,7 @@ export default {
     const guestLogin = () => {
       firebase.auth().signInAnonymously()
     .then(() => {
-      alert("khfskh")
-       router.push('/dashboard')
+      router.push('/dashboard')
     })
     .catch((error) => {
       var errorCode = error.code;

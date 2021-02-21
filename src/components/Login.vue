@@ -23,7 +23,7 @@
           </div>
         </button>
         <small class="text-red-600 mb-2" v-show="test">{{ errorMessage }}</small><br>
-        <a href="#" class="text-blue-500 font-bold underline text-md mt-6" @click="guestLogin">Ingresar como invitado</a>
+        <button href="#" class="text-blue-500 font-bold underline text-md mt-6" @click="guestLogin">Ingresar como invitado</button>
       </div>
     </div>
   </div>
@@ -55,15 +55,12 @@ export default {
 
     const guestLogin = () => {
       firebase.auth().signInAnonymously()
-    .then(() => {
-      router.push('/dashboard')
-    })
-    .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      alert(errorMessage)
-      // ...
-    });
+      .then(() => {
+        router.push('/dashboard')
+      })
+      .catch((error) => {
+        errorMessage.value = error.message;
+      });
     }
 
     return {

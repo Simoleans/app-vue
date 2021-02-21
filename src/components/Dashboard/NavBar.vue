@@ -44,7 +44,7 @@
           <div>
             <button @click="showMenuProfile" v-click-away="closeMenuProfile" class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu" aria-haspopup="true">
               <span class="sr-only">Open user menu</span>
-              <img class="h-8 w-8 rounded-full" v-bind:src="user.photoURL" alt="Perfil">
+              <img class="h-8 w-8 rounded-full" v-bind:src="user.photoURL ?? urlGuest" alt="Perfil">
             </button>
           </div>
           
@@ -93,10 +93,13 @@ export default {
     
     const user = data;
 
+    let urlGuest = 'https://s2.googleusercontent.com/s2/favicons?domain=google.com&sz=32';
+
     return {
       profileMenu : ref(false),
       showMenu : false,
-      user
+      user,
+      urlGuest
     }
   },
   methods : {

@@ -93,9 +93,6 @@ export default {
     
     const user = data;
 
-
-    console.log(user)
-    
     return {
       profileMenu : ref(false),
       showMenu : false,

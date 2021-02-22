@@ -39,7 +39,7 @@ const routes = [
       component : Pagos
     }],
     meta: {
-      requiresAuth: false
+      requiresAuth: true
     },
   },
   {
